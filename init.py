@@ -4,7 +4,6 @@ import mazescan
 import game
 import random
 
-
 pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, pygame.RESIZABLE)
 maze = {}
@@ -30,6 +29,7 @@ while running:
                     pygame.quit()
                     exit()
                 elif screen_width/2-100 <= mouse[0] <= screen_width/2+100 and (screen_heidth/3)*2 <= mouse[1] <= (screen_heidth/3)*2+150:
+                     print(maze[random.randint(0,len(maze)-1)])
                      game.start(screen, maze[random.randint(0,len(maze)-1)])
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_width-75 <= mouse[0] <= screen_width-30 and 25 <= mouse[1] <= 60:
