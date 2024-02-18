@@ -1,6 +1,5 @@
 from math import *
 from random import *
-from transition import *
 
 
 def tour(nb_balle, t_barillet):
