@@ -3,9 +3,10 @@ import os
 import mazescan
 import game
 import random
+import test
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 maze = {}
 
 maze_files = [f for f in os.listdir('images/MAZE') if f.endswith('.png')]
@@ -27,6 +28,7 @@ while running:
             if event.type == pygame.MOUSEBUTTONUP:
                 if screen_width-75 <= mouse[0] <= screen_width-30 and 25 <= mouse[1] <= 60:
                     pygame.quit()
+                    running=False
                     exit()
                 elif screen_width/2-100 <= mouse[0] <= screen_width/2+100 and (screen_heidth/3)*2 <= mouse[1] <= (screen_heidth/3)*2+150:
                     play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))

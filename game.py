@@ -3,11 +3,14 @@ import pytmx
 import pyscroll
 import os
 import random
+import player
 
 
 class Game:
     def __init__(self, screen):
+        self.previous_key_state = {}
         self.screen = screen
+        self.mouvement = 5
         pygame.display.set_caption("CubeQuiBouge")
 
         # Charger la carte
@@ -16,23 +19,65 @@ class Game:
         map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
         map_layer.zoom = 2
 
+        self.player = player.Player(20,20)
+
         self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=1)
+        self.group.add(self.player)
+
+    def input_pressed(self):
+        pressed = pygame.key.get_pressed()
+
+        # Boucle sur toutes les touches surveillées
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT]:
+            # Vérifie si la touche est enfoncée et si elle était relâchée précédemment
+            if pressed[key] and not self.previous_key_state.get(key, False):
+                if self.mouvement > 0:
+                    # Effectue le mouvement correspondant à la touche pressée
+                    if key == pygame.K_UP:
+                        self.player.move_up()
+                    elif key == pygame.K_DOWN:
+                        self.player.move_down()
+                    elif key == pygame.K_RIGHT:
+                        self.player.move_right()
+                    elif key == pygame.K_LEFT:
+                        self.player.move_left()
+                    self.mouvement -= 1
+
+            # Met à jour l'état précédent de la touche
+            self.previous_key_state[key] = pressed[key]
 
     def run(self):
+        screen_width, screen_heidth = self.screen.get_size()
+        leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
+        clock = pygame.time.Clock()
         running = True
         self.screen.fill((0,0,0))
         pygame.display.flip()
         while running:
+            self.input_pressed()
+            self.group.update()
+            self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
+            self.group.draw(leave)
+            self.screen.blit(leave, (screen_width-75, 25))
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running=False
+                    pygame.quit()
+                    exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print("coucou")
+                    self.roulette(100)
+            clock.tick(8)
+    
+    def roulette(self, chance):
+         if random.randint(0,chance)!=1:
+              self.mouvement+=1
+         else:
+              self.player.set_life(self.player.get_life()-10)
+
+         
 
 def start(screen):
-    if __name__ == '__main__':
-        pygame.init()
         game = Game(screen)
         game.run()
