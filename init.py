@@ -2,10 +2,9 @@ import pygame
 import os
 import mazescan
 import game
-import random
 
 pygame.init()
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, pygame.RESIZABLE)
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 maze = {}
 
 maze_files = [f for f in os.listdir('images/MAZE') if f.endswith('.png')]
@@ -13,6 +12,8 @@ maze_files = [f for f in os.listdir('images/MAZE') if f.endswith('.png')]
 for i, f in enumerate(maze_files):
     maze_path = os.path.join('images/MAZE', f)
     maze[i] = mazescan.scan(maze_path)
+
+mazescan.create_xml_file(maze[0])
 
 screen_width, screen_heidth = screen.get_size()
 pygame.display.set_caption("Cubequibouge")
@@ -27,10 +28,11 @@ while running:
             if event.type == pygame.MOUSEBUTTONUP:
                 if screen_width-75 <= mouse[0] <= screen_width-30 and 25 <= mouse[1] <= 60:
                     pygame.quit()
+                    running=False
                     exit()
                 elif screen_width/2-100 <= mouse[0] <= screen_width/2+100 and (screen_heidth/3)*2 <= mouse[1] <= (screen_heidth/3)*2+150:
-                     print(maze[random.randint(0,len(maze)-1)])
-                     game.start(screen, maze[random.randint(0,len(maze)-1)])
+                    play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))
+                    game.start(screen)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if screen_width-75 <= mouse[0] <= screen_width-30 and 25 <= mouse[1] <= 60:
                     leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
