@@ -3,6 +3,7 @@ import pytmx
 import pyscroll
 import random
 import player
+import player
 
 
 class Game:
