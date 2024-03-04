@@ -1,49 +1,70 @@
+### BIBLIOTHEQUES & MODULES
 import pygame
 import os
 import mazescan
 import game
+import random
 
+
+### Initialisation de la fenêtre pygame
 pygame.init()
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-maze = {}
+SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 600
+screen = pygame.display.set_mode((SCREEN_HEIGHT, SCREEN_WIDTH),pygame.NOFRAME)
+pygame.display.set_caption("Cubequibouge")
 
+###Chargement des ressources
+
+#Chargement des images de labyrinthes
 maze_files = [f for f in os.listdir('images/MAZE') if f.endswith('.png')]
 
+#Range les chemins d'accès dans une liste maze
+maze = {}
 for i, f in enumerate(maze_files):
     maze_path = os.path.join('images/MAZE', f)
     maze[i] = mazescan.scan(maze_path)
 
-mazescan.create_xml_file(maze[0])
-
-screen_width, screen_heidth = screen.get_size()
-pygame.display.set_caption("Cubequibouge")
+#Chargement des images de boutons & fond de la page d'accueil
 leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
-background = pygame.transform.scale(pygame.image.load("images/lobby (Dall-E).png"), (screen_width,screen_heidth))
+background = pygame.transform.scale(pygame.image.load("images/lobby (Dall-E).png"), screen.get_size())
 play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))
-mouse=pygame.mouse.get_pos()
 
-running=True
+
+#Créations de zones cliquables sous forme de Rect pour simplifier la gestion des collisions avec les images des boutons et régler leur position (en prenant le centre du rectangle)
+leave_rect = leave.get_rect()
+leave_rect.topleft = (SCREEN_HEIGHT-75, 25)
+play_rect = play.get_rect()
+play_rect.topleft =(SCREEN_HEIGHT/2-100, (SCREEN_WIDTH/3)*2)
+
+
+# mouse=pygame.mouse.get_pos() --> pas utile ?
+
+
+###Boucle principale
+running = True
 while running:
+    #Récupération des évènements
     for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONUP:
-                if screen_width-75 <= mouse[0] <= screen_width-30 and 25 <= mouse[1] <= 60:
-                    pygame.quit()
-                    running=False
-                    running=False
-                    exit()
-                elif screen_width/2-100 <= mouse[0] <= screen_width/2+100 and (screen_heidth/3)*2 <= mouse[1] <= (screen_heidth/3)*2+150:
-                    play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))
-                    game.start(screen)
-                    play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))
-                    game.start(screen)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if screen_width-75 <= mouse[0] <= screen_width-30 and 25 <= mouse[1] <= 60:
-                    leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
-                elif screen_width/2-100 <= mouse[0] <= screen_width/2+100 and (screen_heidth/3)*2 <= mouse[1] <= (screen_heidth/3)*2+150:
-                     play = pygame.transform.scale(pygame.image.load("images/play_off.png"), (200,150))
+        #on récupère les clics de la souris
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            #collisions avec les rectangles
+            if leave_rect.collidepoint(event.pos):
+                leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
+                #sortie de la boucle
+                running = False
+
+            elif play_rect.collidepoint(event.pos):
+                play = pygame.transform.scale(pygame.image.load("images/play_off.png"), (200,150))
+                #lancement du jeu
+                game.start(screen)
+                #running = False #si on veut quitter sans repasser par l'accueil quand on quitte le jeu
+
+    #Affichages
     screen.blit(background, (0, 0))
-    screen.blit(leave, (screen_width-75, 25))
-    screen.blit(play, (screen_width/2-100, (screen_heidth/3)*2))
-    mouse=pygame.mouse.get_pos()
+    screen.blit(leave, leave_rect)
+    screen.blit(play, play_rect)
+    # mouse = pygame.mouse.get_pos() --> pas utile ?
     pygame.display.flip()
+
+#fermeture de pygame
+pygame.quit()

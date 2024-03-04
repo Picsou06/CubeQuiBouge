@@ -74,3 +74,4 @@ def Duel(Rouge, Blanc):
     print ("Il y a ",Rouge," balles réelles et ",Blanc," balles à Blanc")
     print ("On les insères dans un ordre aléatoire dans le fusils à pompe")
     Chargeur = pompe(Rouge, Blanc)
+    #print(Chargeur)
