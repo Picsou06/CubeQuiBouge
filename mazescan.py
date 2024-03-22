@@ -1,32 +1,98 @@
-from PIL import Image
-# open the image file
-def scan(nom):
-    img = Image.open(nom)
+import pygame
+import pytmx
+import pyscroll
+import random
+import player
+import player
 
-    # create an empty matrix
-    matrix = [[0 for x in range(img.height)] for y in range(img.width)]
 
-    # scan the image (in pixels)
-    for i in range(img.width):
-        for j in range(img.height):
-            # get the pixel color
-            r, g, b, a = img.getpixel((i, j))
+class Game:
+    def __init__(self, screen):
+        self.previous_key_state = {}
+        self.screen = screen
+        self.mouvement = 1
+        pygame.display.set_caption("CubeQuiBouge")
 
-            # determine the value to add to the matrix
-            if r == 0 and g == 0 and b == 0 and a == 0: #Sol
-                matrix[i][j] = 0
-            elif r == 0 and g == 0 and b == 0 and a == 255: #Mur
-                matrix[i][j] = 1
-            elif r == 254 and g == 235 and b == 0 and a == 255: #Coffre
-                matrix[i][j] = 2
-            elif r == 94 and g == 255 and b == 0 and a == 255: #Shop
-                matrix[i][j] = 3
-            elif r == 236 and g == 0 and b == 0 and a == 255: #start
-                matrix[i][j] = 4
-            elif r == 0 and g == 27 and b == 165 and a == 255: #clé
-                matrix[i][j] = 5
-            elif r == 246 and g == 246 and b == 246 and a == 255: #arrivé
-                matrix[i][j] = 6
-            else:
-                matrix[i][j] = "ERROR"
-    return matrix
+        # Charger la carte
+        tmx_data = pytmx.util_pygame.load_pygame('Tiled\\map.tmx')
+        map_data = pyscroll.data.TiledMapData(tmx_data)
+        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+        map_layer.zoom = 8
+
+        # Création du joueur
+        player_position = tmx_data.get_object_by_name("Player")
+        self.player = player.Player(1, 1)
+
+        # Collision
+        self.walls = []
+        for obj in tmx_data.objects:
+            if obj.type == "collision":
+                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+
+        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=3)
+        self.group.add(self.player)
+
+    def input_pressed(self):
+        pressed = pygame.key.get_pressed()
+
+        # Boucle sur toutes les touches surveillées
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT]:
+            # Vérifie si la touche est enfoncée et si elle était relâchée précédemment
+            if pressed[key] and not self.previous_key_state.get(key, False):
+                if self.mouvement > 0:
+                    # Effectue le mouvement correspondant à la touche pressée
+                    if key == pygame.K_UP:
+                        self.player.move_up()
+                    elif key == pygame.K_DOWN:
+                        self.player.move_down()
+                    elif key == pygame.K_RIGHT:
+                        self.player.move_right()
+                    elif key == pygame.K_LEFT:
+                        self.player.move_left()
+                    self.mouvement -= 1
+
+            # Met à jour l'état précédent de la touche
+            self.previous_key_state[key] = pressed[key]
+
+    def update(self):
+        self.group.update()
+        # Verification collision
+        for sprite in self.group.sprites():
+            if sprite.feet.collidelist(self.walls) > 0:
+                sprite.move_back()
+
+    def run(self):
+        screen_width, screen_heidth = self.screen.get_size()
+        leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45, 45))
+        clock = pygame.time.Clock()
+        running = True
+        self.screen.fill((0, 0, 0))
+        pygame.display.flip()
+        while running:
+            self.player.save_location()
+            self.input_pressed()
+            self.update()
+            self.group.center(self.player.rect.center)
+            self.group.draw(self.screen)
+            self.group.draw(leave)
+            self.screen.blit(leave, (screen_width - 75, 25))
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.roulette(100)
+            clock.tick(8)
+
+    def roulette(self, chance):
+        if random.randint(0, chance) != 1:
+            self.mouvement += 1
+        else:
+            self.player.set_life(self.player.get_life() - 10)
+
+
+def start(screen):
+    game = Game(screen)
+    game.run()
