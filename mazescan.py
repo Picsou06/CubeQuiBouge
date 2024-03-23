@@ -65,7 +65,7 @@ def create_xml_file(matrix):
 
         for row_index, row in enumerate(matrix):
             futurspawn[0] += 1
-            for col_index, val in enumerate(row):
+            for val in row:
                 futurspawn[1] += 1
                 if val == 0:
                     new_val = random.choice([4, 5, 6])
@@ -88,8 +88,8 @@ def create_xml_file(matrix):
             if row_index < len(matrix) - 1:
                 f.write("\n")
             else:
-                f.seek(f.tell() - 1, 0)  # Move the cursor one position back
-                f.truncate()  # Truncate the last comma
+                f.seek(f.tell() - 1, 0)
+                f.truncate()
 
         f.write("\n")
         f.write("""</data>
@@ -100,6 +100,6 @@ def create_xml_file(matrix):
   </object>\n""")
         for i in player_interaction(matrix):
             f.write("  "+i+"\n")
-        f.write(""" <object id="1087" type="collision" x="1600" y="0" width="40" height="1600"/>\n <object id="1088" type="collision" x="-40" y="0" width="40" height="1600"/>\n <object id="1089" type="collision" x="1600" y="-40" width="40" height="1600" rotation="90"/>\n <object id="1090" type="collision" x="1600" y="1600" width="40" height="1600" rotation="90"/>\n""")
+        #f.write(""" <object id="1087" type="collision" x="1600" y="0" width="40" height="1600"/>\n <object id="1088" type="collision" x="-40" y="0" width="40" height="1600"/>\n <object id="1089" type="collision" x="1600" y="-40" width="40" height="1600" rotation="90"/>\n <object id="1090" type="collision" x="1600" y="1600" width="40" height="1600" rotation="90"/>\n""")
         f.write(""" </objectgroup>
 </map>""")
