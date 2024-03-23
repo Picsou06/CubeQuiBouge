@@ -3,7 +3,6 @@ import pygame
 import os
 import mazescan
 import game
-import random
 
 
 ### Initialisation de la fenêtre pygame
@@ -23,6 +22,8 @@ maze = {}
 for i, f in enumerate(maze_files):
     maze_path = os.path.join('images/MAZE', f)
     maze[i] = mazescan.scan(maze_path)
+
+mazescan.create_xml_file(maze[0])
 
 #Chargement des images de boutons & fond de la page d'accueil
 leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
@@ -55,15 +56,14 @@ while running:
 
             elif play_rect.collidepoint(event.pos):
                 play = pygame.transform.scale(pygame.image.load("images/play_off.png"), (200,150))
+                running = False
                 #lancement du jeu
                 game.start(screen)
-                #running = False #si on veut quitter sans repasser par l'accueil quand on quitte le jeu
 
     #Affichages
     screen.blit(background, (0, 0))
     screen.blit(leave, leave_rect)
     screen.blit(play, play_rect)
-    # mouse = pygame.mouse.get_pos() --> pas utile ?
     pygame.display.flip()
 
 #fermeture de pygame
