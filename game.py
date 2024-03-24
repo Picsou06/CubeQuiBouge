@@ -26,7 +26,7 @@ class Game:
          # Création du joueur
         player_position = tmx_data.get_object_by_name("Player")
         print(int(player_position.x), int(player_position.y))
-        self.player = player.Player(player_position.x/50, player_position.y/50)
+        self.player = player.Player(player_position.x, player_position.y)
         #Ajout du joueur au group de sprite de la map
         self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=1)
         self.group.add(self.player)
