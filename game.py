@@ -57,21 +57,21 @@ class Game:
         pressed = pygame.key.get_pressed()
 
         # Boucle sur toutes les touches surveillées
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_a, pygame.K_z]:
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_a]:
             # Vérifie si la touche est enfoncée et si elle était relâchée précédemment
             if pressed[key] and not self.previous_key_state.get(key, False):
                 if self.mouvement > 0:
                     # Effectue le mouvement correspondant à la touche pressée
                     if key == pygame.K_UP:
                         self.player.move_up()
-                    elif key == pygame.K_a:
-                        self.__init__(self.screen, self.matrix, self.player.get_location())
                     elif key == pygame.K_DOWN:
                         self.player.move_down()
                     elif key == pygame.K_RIGHT:
                         self.player.move_right()
                     elif key == pygame.K_LEFT:
                         self.player.move_left()
+                    elif key == pygame.K_a:
+                        self.__init__(self.screen, self.matrix, self.player.get_location())
 
                     self.mouvement -= 1
 
@@ -94,7 +94,9 @@ class Game:
             if sprite.feet.collidelist(self.chest) >= 0:
                 position=self.player.get_location()
                 self.matrix[int(position[1]/32)][int(position[0]/32)]=0
-                self.player.add_money(random.randint(5,20)*self.player.get_chance())
+                x=random.randint(5,20)*self.player.get_chance()
+                print(x)
+                self.player.add_money(x)
                 mazescan.create_xml_file(self.matrix)
                 self.__init__(self.screen, self.matrix, self.player.get_location())
             if sprite.feet.collidelist(self.walls) > 0:
@@ -104,9 +106,9 @@ class Game:
 
     def run(self):
         screen_width, screen_heidth = self.screen.get_size()
-        leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45, 45))
-        leave_rect = leave.get_rect()
-        leave_rect.topleft = (screen_heidth-75, 25)
+        money_img = pygame.transform.scale(pygame.image.load("images/money.png"), (45, 45))
+        font = pygame.font.SysFont('bold', 30)
+        money = font.render(str(self.player.get_money()), True, (255, 255, 255))
         clock = pygame.time.Clock()
         running = True
         self.screen.fill((0, 0, 0))
@@ -117,7 +119,9 @@ class Game:
             self.update()
             self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
-            self.screen.blit(leave, (screen_width - 75, 25))
+            self.screen.blit(money_img, (screen_width - 75, 25))
+            self.screen.blit(money, (screen_width - 60, 35))
+
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -125,13 +129,8 @@ class Game:
                     pygame.quit()
                     exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if leave_rect.collidepoint(event.pos):
-                        leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
-                        #sortie de la boucle
-                        running = False
-                    else:
-                        self.roulette(6)
-            clock.tick(8)
+                    self.roulette(6)
+            clock.tick(16)
 
     def roulette(self, chance):
          if random.randint(0,chance)!=1:

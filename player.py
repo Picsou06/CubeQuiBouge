@@ -4,7 +4,7 @@ import pygame
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         self.life=40
-        self.money=0
+        self.money=10
         self.chance=1
         super().__init__()
         self.sprite_sheet = pygame.image.load("images/player.png")
@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
         self.money=prix
 
     def add_money(self,money):
-        self.money+=money
+        self.money=self.money+money
     
     def get_chance(self):
         return self.chance

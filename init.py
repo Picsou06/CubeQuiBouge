@@ -9,7 +9,7 @@ import game
 pygame.init()
 SCREEN_HEIGHT = 800
 SCREEN_WIDTH = 600
-screen = pygame.display.set_mode((SCREEN_HEIGHT, SCREEN_WIDTH),pygame.NOFRAME)
+screen = pygame.display.set_mode((SCREEN_HEIGHT, SCREEN_WIDTH))
 pygame.display.set_caption("Cubequibouge")
 
 ###Chargement des ressources
