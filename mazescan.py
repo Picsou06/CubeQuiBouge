@@ -53,6 +53,9 @@ def player_interaction(matrix):
                 count+=1
                 result.append(f"""<object id="{count}" name="end" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
                 count+=1
+            if matrix[j][i]==7:
+                result.append(f"""<object id="{count}" name="end" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
+                count+=1
     return result
 def create_xml_file(matrix):
     with open("Tiled\map.tmx", "w") as f:
@@ -73,7 +76,7 @@ def create_xml_file(matrix):
                 elif val == 1:
                     new_val = random.choice([1, 2, 3])
                 elif val == 2:
-                    new_val = 9
+                    new_val = 10
                 elif val == 3:
                     new_val = 9
                 elif val == 4:
@@ -83,6 +86,8 @@ def create_xml_file(matrix):
                     new_val = 11
                 elif val == 6:
                     new_val = 4
+                elif val == 7:
+                    new_val = 5
                 else:
                     new_val = val
                 f.write(f"{new_val},")

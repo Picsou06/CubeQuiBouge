@@ -23,7 +23,7 @@ for i, f in enumerate(maze_files):
     maze_path = os.path.join('images/MAZE', f)
     maze[i] = mazescan.scan(maze_path)
 
-mazescan.create_xml_file(maze[0])
+mazescan.create_xml_file(maze[1])
 
 #Chargement des images de boutons & fond de la page d'accueil
 leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
@@ -54,7 +54,7 @@ while running:
                 play = pygame.transform.scale(pygame.image.load("images/play_off.png"), (200,150))
                 running = False
                 #lancement du jeu
-                game.start(screen, maze[0])
+                game.start(screen, maze[1])
 
     #Affichages
     screen.blit(background, (0, 0))

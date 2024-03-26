@@ -6,6 +6,9 @@ import os
 import random
 import player
 import mazescan
+import time
+
+start=0
 
 ### CLASSE
 class Game:
@@ -62,19 +65,14 @@ class Game:
                     if key == pygame.K_UP:
                         self.player.move_up()
                     elif key == pygame.K_a:
-                        self.__init__(self.screen, self.player.get_location())
-                    elif key == pygame.K_z:
-                        for sprite in self.group.sprites():
-                            print(sprite.feet.collidelist(self.key))
-                            print(sprite.feet.collidelist(self.end))
+                        self.__init__(self.screen, self.matrix, self.player.get_location())
                     elif key == pygame.K_DOWN:
                         self.player.move_down()
                     elif key == pygame.K_RIGHT:
                         self.player.move_right()
                     elif key == pygame.K_LEFT:
                         self.player.move_left()
-                    
-                        
+
                     self.mouvement -= 1
 
             # Met à jour l'état précédent de la touche
@@ -85,11 +83,24 @@ class Game:
         # Verification collision
         for sprite in self.group.sprites():
             if sprite.feet.collidelist(self.key) == 0:
-                self.__init__(self.screen, self.player.get_location())
-            if sprite.feet.collidelist(self.end) == 0:
-                print("end")
+                position=self.player.get_location()
+                self.matrix[int(position[1]/32)][int(position[0]/32)]=0
+                for i in range(len(self.matrix)):
+                    for j in range(len(self.matrix[i])):
+                        if self.matrix[i][j]==6:
+                            self.matrix[i][j]=7
+                mazescan.create_xml_file(self.matrix)
+                self.__init__(self.screen, self.matrix, self.player.get_location())
+            if sprite.feet.collidelist(self.chest) >= 0:
+                position=self.player.get_location()
+                self.matrix[int(position[1]/32)][int(position[0]/32)]=0
+                self.player.add_money(random.randint(5,20)*self.player.get_chance())
+                mazescan.create_xml_file(self.matrix)
+                self.__init__(self.screen, self.matrix, self.player.get_location())
             if sprite.feet.collidelist(self.walls) > 0:
                 sprite.move_back()
+            elif sprite.feet.collidelist(self.end) == 0:
+                end()
 
     def run(self):
         screen_width, screen_heidth = self.screen.get_size()
@@ -124,7 +135,7 @@ class Game:
 
     def roulette(self, chance):
          if random.randint(0,chance)!=1:
-              self.mouvement+=1
+              self.mouvement+=100
          else:
               self.player.set_life(self.player.get_life()-10)
 
@@ -133,3 +144,9 @@ class Game:
 def start(screen, matrix):
         game = Game(screen, matrix)
         game.run()
+        global start
+        start = time.monotonic()
+
+def end():
+    global start
+    pygame.exit()
