@@ -4,6 +4,7 @@ import pygame
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         self.life=40
+        self.money=0
         super().__init__()
         self.sprite_sheet = pygame.image.load("images/player.png")
         self.image=self.get_image(0,0)
@@ -14,6 +15,8 @@ class Player(pygame.sprite.Sprite):
         self.feet= pygame.Rect(0,0, self.rect.width * 0.5, 12)
         self.old_position = self.position.copy()
 
+    def get_location(self):
+        return self.position
 
     def save_location(self):
         self.old_position = self.position.copy()
@@ -62,3 +65,12 @@ class Player(pygame.sprite.Sprite):
     
     def set_life(self,life):
         self.life=life
+    
+    def get_money(self):
+        return self.money
+    
+    def pay_money(self,prix):
+        self.money=self.money-prix
+    
+    def set_money(self,prix):
+        self.money=prix

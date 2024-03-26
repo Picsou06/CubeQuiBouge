@@ -37,10 +37,6 @@ leave_rect.topleft = (SCREEN_HEIGHT-75, 25)
 play_rect = play.get_rect()
 play_rect.topleft =(SCREEN_HEIGHT/2-100, (SCREEN_WIDTH/3)*2)
 
-
-# mouse=pygame.mouse.get_pos() --> pas utile ?
-
-
 ###Boucle principale
 running = True
 while running:

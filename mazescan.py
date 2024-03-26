@@ -6,9 +6,6 @@ def scan(nom):
 
     # create an empty matrix
     matrix = [[0 for x in range(img.width)] for y in range(img.height)]
-
-    print(img.width)
-    print(img.height)
     # scan the image (in pixels)
     for j in range(img.height):  # Parcours des lignes d'abord
         for i in range(img.width):  # Parcours des colonnes ensuite
@@ -70,20 +67,20 @@ def create_xml_file(matrix):
             for val in row:
                 futurspawn[1] += 1
                 if val == 0:
-                    new_val = random.choice([4, 5, 6])
+                    new_val = random.choice([6, 7, 8])
                 elif val == 1:
                     new_val = random.choice([1, 2, 3])
                 elif val == 2:
-                    new_val = 8
+                    new_val = 9
                 elif val == 3:
-                    new_val = 7
+                    new_val = 9
                 elif val == 4:
-                    new_val = random.choice([4, 5, 6])
+                    new_val = random.choice([6, 7, 8])
                     spawn = futurspawn.copy()
                 elif val == 5:
-                    new_val = random.choice([4, 5, 6])
+                    new_val = 11
                 elif val == 6:
-                    new_val = random.choice([4, 5, 6])
+                    new_val = 4
                 else:
                     new_val = val
                 f.write(f"{new_val},")
@@ -96,7 +93,6 @@ def create_xml_file(matrix):
         f.write("\n")
         f.write("""</data>
  </layer>\n""")
-        print(spawn)
         f.write(f""" <objectgroup id="2" name="Objects">
   <object id="3" name="Player" x="{spawn[1]}" y="{spawn[0]}">
    <point/>
