@@ -54,7 +54,7 @@ while running:
                 play = pygame.transform.scale(pygame.image.load("images/play_off.png"), (200,150))
                 running = False
                 #lancement du jeu
-                game.start(screen)
+                game.start(screen, maze[0])
 
     #Affichages
     screen.blit(background, (0, 0))

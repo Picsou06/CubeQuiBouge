@@ -5,14 +5,16 @@ import pyscroll
 import os
 import random
 import player
+import mazescan
 
 ### CLASSE
 class Game:
-    def __init__(self, screen, pos = False):
+    def __init__(self, screen, matrix, pos = False):
         if not pos:
             self.previous_key_state = {}
             self.screen = screen
             self.mouvement = 5
+            self.matrix = matrix
 
         # Charger la carte
         tmx_data = pytmx.util_pygame.load_pygame('Tiled\\map.tmx')
@@ -23,14 +25,21 @@ class Game:
         self.walls = []
         self.shop = []
         self.chest = []
+        self.key = []
+        self.end = []
         for obj in tmx_data.objects:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
             if obj.type == "shop":
-                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+                self.shop.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
             if obj.type == "chest":
-                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
-         # Créatidu joueur
+                self.chest.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+            if obj.name == "key":
+                self.key.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+            if obj.name == "end":
+                self.end.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+
+        # Création du joueur
         if not pos:
             player_position = tmx_data.get_object_by_name("Player")
             self.player = player.Player(player_position.x, player_position.y)
@@ -45,18 +54,21 @@ class Game:
         pressed = pygame.key.get_pressed()
 
         # Boucle sur toutes les touches surveillées
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT]:
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_a, pygame.K_z]:
             # Vérifie si la touche est enfoncée et si elle était relâchée précédemment
             if pressed[key] and not self.previous_key_state.get(key, False):
                 if self.mouvement > 0:
                     # Effectue le mouvement correspondant à la touche pressée
                     if key == pygame.K_UP:
                         self.player.move_up()
-                    elif key == pygame.K_BACKSPACE:
-                        print("update")
+                    elif key == pygame.K_a:
                         self.__init__(self.screen, self.player.get_location())
+                    elif key == pygame.K_z:
+                        for sprite in self.group.sprites():
+                            print(sprite.feet.collidelist(self.key))
+                            print(sprite.feet.collidelist(self.end))
                     elif key == pygame.K_DOWN:
-                        self.__init__(self.screen, self.player.get_location())
+                        self.player.move_down()
                     elif key == pygame.K_RIGHT:
                         self.player.move_right()
                     elif key == pygame.K_LEFT:
@@ -72,6 +84,10 @@ class Game:
         self.group.update()
         # Verification collision
         for sprite in self.group.sprites():
+            if sprite.feet.collidelist(self.key) == 0:
+                self.__init__(self.screen, self.player.get_location())
+            if sprite.feet.collidelist(self.end) == 0:
+                print("end")
             if sprite.feet.collidelist(self.walls) > 0:
                 sprite.move_back()
 
@@ -114,6 +130,6 @@ class Game:
 
 
 #Crée un objet Game et lance la partie
-def start(screen):
-        game = Game(screen)
+def start(screen, matrix):
+        game = Game(screen, matrix)
         game.run()

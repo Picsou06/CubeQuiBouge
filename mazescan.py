@@ -46,10 +46,12 @@ def player_interaction(matrix):
                 result.append(f"""<object id="{count}" type="shop" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
                 count+=1
             if matrix[j][i]==5:
-                result.append(f"""<object id="{count}" type="key" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
+                result.append(f"""<object id="{count}" name="key" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
                 count+=1
             if matrix[j][i]==6:
-                result.append(f"""<object id="{count}" type="end" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
+                result.append(f"""<object id="{count}" type="collision" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
+                count+=1
+                result.append(f"""<object id="{count}" name="end" x="{i*32}" y="{j*32}" width="32" height="32"/>""")
                 count+=1
     return result
 def create_xml_file(matrix):
@@ -99,6 +101,5 @@ def create_xml_file(matrix):
   </object>\n""")
         for i in player_interaction(matrix):
             f.write("  "+i+"\n")
-        #f.write(""" <object id="1087" type="collision" x="1600" y="0" width="40" height="1600"/>\n <object id="1088" type="collision" x="-40" y="0" width="40" height="1600"/>\n <object id="1089" type="collision" x="1600" y="-40" width="40" height="1600" rotation="90"/>\n <object id="1090" type="collision" x="1600" y="1600" width="40" height="1600" rotation="90"/>\n""")
         f.write(""" </objectgroup>
 </map>""")
