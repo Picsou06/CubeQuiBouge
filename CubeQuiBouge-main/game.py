@@ -7,6 +7,7 @@ import random
 import player
 import mazescan
 import time
+import endgame
 
 start=0
 
@@ -16,7 +17,7 @@ class Game:
         if not pos:
             self.previous_key_state = {}
             self.screen = screen
-            self.mouvement = 5
+            self.mouvement = 21
             self.matrix = matrix
 
         # Charger la carte
@@ -102,7 +103,8 @@ class Game:
             if sprite.feet.collidelist(self.walls) > 0:
                 sprite.move_back()
             elif sprite.feet.collidelist(self.end) == 0:
-                end()
+                endgame.win(self.screen)
+                
 
     def run(self):
         screen_width, screen_height = self.screen.get_size()
@@ -175,6 +177,3 @@ def start(screen, matrix):
         global start
         start = time.monotonic()
 
-def end():
-    global start
-    pygame.exit()
