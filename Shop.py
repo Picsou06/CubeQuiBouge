@@ -1,6 +1,6 @@
 import pygame
 from math import *
-
+import time
 
 
 def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, champi_v, Fer a cheval, Trèfle, Popo de Vie]
@@ -10,6 +10,7 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
   font = pygame.font.SysFont('bold', 30)
 
   lst_prix = [40,60,20,15,130,60,40,30]
+  vie_img = pygame.transform.scale(pygame.image.load("images/vie.png"), (45, 45))
   screen_width, screen_height = screen.get_size()
   base = pygame.transform.scale(pygame.image.load("images/Shop/sprite_01.png"), (550, 500))
   rect_base = base.get_rect()
@@ -30,17 +31,17 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
   Rick = pygame.transform.scale(pygame.image.load("images/Shop/sprite_10.png"), (550, 500))
   Nyan = pygame.transform.scale(pygame.image.load("images/Shop/sprite_11.png"), (550, 500))
   Armure = pygame.transform.scale(pygame.image.load("images/Shop/sprite_12.png"), (550, 500))
-  rect_armure = pygame.Rect(rect_base.left+120,rect_base.top+180,24,54)
+  rect_armure = pygame.Rect(rect_base.left+120,rect_base.top+180,24,54) 
   bocal = pygame.transform.scale(pygame.image.load("images/Shop/sprite_13.png"), (550, 500))
   shield = pygame.transform.scale(pygame.image.load("images/Shop/sprite_14.png"), (550, 500))
   rect_shield = pygame.Rect(rect_base.left+366,rect_base.top+174,60,60)
-  fer_cheval = pygame.transform.scale(pygame.image.load("images/Shop/sprite_03.png"), (550, 500))
+  fer_cheval = pygame.transform.scale(pygame.image.load("images/Shop/sprite_15.png"), (550, 500))
   rect_fer_cheval = pygame.Rect(rect_base.left+434,rect_base.top+212,34,22)
   leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
   rect_leave = pygame.Rect(rect_base.left,rect_base.top,45,45)
   money_img = pygame.transform.scale(pygame.image.load("images/money.png"), (45, 45))
+  notmoney_img = pygame.transform.scale(pygame.image.load("images/notmoney.png"), (45, 45))
   lst_prix = [40,60,20,15,130,60,40,30]
-  base_widht,base_height = base.get_size()
   statut_armure="sold"
   statut_barillet="sold"
   statut_champi_r="sold"
@@ -51,6 +52,9 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
   statut_popo_de_vie="sold"  
   
   while running:
+      money = font.render(str(player.get_money()), True, (255, 255, 255))
+      vie = font.render(str(player.get_life()), True, (255,255,255))
+      screen.fill((48,46,55))
       screen.blit(base, rect_base)
       screen.blit(portal_gun, rect_base)
       screen.blit(bocal, rect_base)
@@ -59,7 +63,11 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
       screen.blit(triforce, rect_base)
       screen.blit(sabre_laser, rect_base)
       screen.blit(leave, rect_base)
-      if inv[0] == 0: 
+      screen.blit(money_img, (screen_width - 75, 25))
+      screen.blit(money, (screen_width - 65, 35))
+      screen.blit(vie_img, (screen_width - 75, 70))
+      screen.blit(vie, (screen_width - 70, 80))
+      if inv[0] == 0:
         #Barillet 9 places
         statut_barillet = "dispo"
         screen.blit(barillet, rect_base)
@@ -100,13 +108,22 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
                       inv[0] = 1
                       player.set_money(player.get_money() - 40) 
                       statut_barillet = "sold"
-
+                    else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(40), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
                 if rect_armure.collidepoint(event.pos):
                   if statut_armure == "dispo":
                     if player.get_money() >= 60:
                       inv[1] = 1
                       player.set_money(player.get_money() - 60)
                       statut_armure = "sold"
+                    else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(60), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
 
               
                 if rect_shield.collidepoint(event.pos):
@@ -115,12 +132,22 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
                         inv[2] = 1
                         player.set_money(player.get_money() - 20)
                         statut_shield = "sold"
+                      else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(20), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
 
                 if rect_champ_r.collidepoint(event.pos):
                     if statut_champi_r == "dispo":
                       if player.get_money() >= 15:
                         player.set_money(player.get_money() - 15)
                         player.set_life(player.get_life()+5)
+                      else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(15), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
 
                 if rect_champ_v.collidepoint(event.pos):
                   if statut_champi_v == "dispo":
@@ -128,6 +155,11 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
                       inv[4] = 1
                       player.set_money(player.get_money()-130)
                       statut_champi_v = "sold"
+                    else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(130), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
 
                 if rect_fer_cheval.collidepoint(event.pos):
                   if statut_fer_a_cheval == "dispo":
@@ -136,6 +168,11 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
                       player.set_money(player.get_money()-60)
                       statut_fer_a_cheval = "sold"
                       player.add_chance(2)
+                    else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(60), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
 
                 if rect_trefle.collidepoint(event.pos):
                   if statut_trefle == "dispo":
@@ -144,14 +181,23 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
                       player.set_money(player.get_money()-40)
                       statut_trefle = "sold"
                       player.add_chance(1)
+                    else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(40), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
 
                 if rect_popo_vie.collidepoint(event.pos):
                   if statut_popo_de_vie == "dispo":
                     if player.get_money() >= 30:
                       player.set_money(player.get_money()-30)
                       player.set_life(player.get_life()+10)
-                
-              
+                    else:
+                       screen.blit(notmoney_img, pygame.mouse.get_pos())
+                       screen.blit(font.render(str(30), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                       pygame.display.flip()
+                       time.sleep(0.2)
+
                 if event.type == pygame.QUIT:
                   running = False
                   pygame.quit()
@@ -161,8 +207,8 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
                   return inv
       if rect_barillet.collidepoint(pygame.mouse.get_pos()):
             if statut_barillet == "dispo":
-                screen.blit(money_img, pygame.mouse.get_pos())
-                screen.blit(font.render(str(lst_prix[0]), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+                  screen.blit(money_img, pygame.mouse.get_pos())
+                  screen.blit(font.render(str(lst_prix[0]), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
       if rect_armure.collidepoint(pygame.mouse.get_pos()):
             if statut_armure == "dispo":
                 screen.blit(money_img, pygame.mouse.get_pos())

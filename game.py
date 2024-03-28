@@ -19,7 +19,7 @@ class Game:
         if not pos:
             self.previous_key_state = {}
             self.screen = screen
-            self.mouvement = 21
+            self.mouvement = 24
             self.matrix = matrix
 
         # Charger la carte
@@ -49,9 +49,9 @@ class Game:
         if not pos:
             player_position = tmx_data.get_object_by_name("Player")
             self.player = player.Player(player_position.x, player_position.y)
-            self.player.set_life(40)
-            self.player.set_money(1000)
-            self.player.set_chance(1)
+            self.player.set_life(80)
+            self.player.set_money(0)
+            self.player.set_chance(1) 
             self.player.set_inventory([0, 0, 0, 0, 0, 0, 0, 0])
         #Ajout du joueur au group de sprite de la map
         self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=1)
@@ -59,7 +59,7 @@ class Game:
     def input_pressed(self):
         pressed = pygame.key.get_pressed()
         # Boucle sur toutes les touches surveillées
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_ESCAPE, pygame.K_a]:
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_ESCAPE, pygame.K_s]:
             # Vérifie si la touche est enfoncée et si elle était relâchée précédemment
             if pressed[key] and not self.previous_key_state.get(key, False):
                 if key == pygame.K_ESCAPE:
@@ -70,7 +70,7 @@ class Game:
                             pause_surface = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
                             pause_surface.fill(GRAY_TRANSPARENT)
                             self.screen.blit(pause_surface, (0, 0))
-                            font = pygame.font.SysFont(None, 64)
+                            font = pygame.font.SysFont('bold', 64)
                             text_surface = font.render("PAUSE", True, (255, 255, 255))
                             self.screen.blit(text_surface, ((screen_width - text_surface.get_width()) // 2, (screen_height - text_surface.get_height()) // 2))
                             pygame.display.flip()
@@ -83,10 +83,14 @@ class Game:
                                         pygame.quit()
                                         exit()
                             timer.start()
-                if key == pygame.K_a:
+                if key == pygame.K_s:
+                    timer.pause()
                     Shop.s_inv(self.screen, self.player)
+                    timer.resume()
                     if self.player.get_inventory()[0]==1:
+                        global t_barillet, barillet, nb_balle
                         t_barillet=9
+                        barillet = pygame.transform.scale(pygame.image.load("images/barillet/big_barillet0.png"), (110, 110))
                 if self.mouvement > 0:
                     # Effectue le mouvement correspondant à la touche pressée
                     if key == pygame.K_UP:
@@ -132,10 +136,11 @@ class Game:
 
 
     def run(self):
-        global screen_width, screen_height, t_barillet
+        global screen_width, screen_height, barillet, t_barillet, nb_balle
         screen_width, screen_height = self.screen.get_size()
         money_img = pygame.transform.scale(pygame.image.load("images/money.png"), (45, 45))
         font = pygame.font.SysFont('bold', 30)
+        shield_img = pygame.transform.scale(pygame.image.load("images/shild_on.png"), (45, 45))
         vie_img = pygame.transform.scale(pygame.image.load("images/vie.png"), (45, 45))
         barillet = pygame.transform.scale(pygame.image.load("images/barillet/barillet0.png"),(110,110))
         plus = pygame.transform.scale(pygame.image.load("images/boutton_plus.png"), (40,26))
@@ -167,14 +172,11 @@ class Game:
             self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
             self.screen.blit(money_img, (screen_width - 75, 25))
-            self.screen.blit(money, (screen_width - 60, 35))
+            if self.player.get_inventory()[2]==1:
+                self.screen.blit(shield_img, (screen_width - 130, 25))
+            self.screen.blit(money, (screen_width - 65, 35))
             self.screen.blit(vie_img, (screen_width - 75, 70))
-            self.screen.blit(vie, (screen_width - 65, 80))
-            self.screen.blit(plus, plus_rect)
-            self.screen.blit(moins, moins_rect)
-            self.screen.blit(barillet, (screen_width - 110, screen_height - 110))
-            self.screen.blit(vie_img, (screen_width - 75, 70))
-            self.screen.blit(vie, (screen_width - 60, 80))
+            self.screen.blit(vie, (screen_width - 70, 80))
             self.screen.blit(plus, plus_rect)
             self.screen.blit(moins, moins_rect)
             self.screen.blit(barillet, (screen_width - 110, screen_height - 110))
@@ -188,27 +190,58 @@ class Game:
                     pygame.quit()
                     exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if plus_rect.collidepoint(event.pos):
-                        if nb_balle < t_barillet:
-                            nb_balle += 1
-                            barillet = pygame.transform.scale(pygame.image.load(f"images/barillet/barillet{nb_balle}.png"), (110, 110))
-                    elif moins_rect.collidepoint(event.pos):
-                        if nb_balle > 0:
-                            nb_balle -= 1
-                            barillet = pygame.transform.scale(pygame.image.load(f"images/barillet/barillet{nb_balle}.png"), (110, 110))
-                    else:
-                        self.roulette(nb_balle, t_barillet)
+                    if self.player.get_inventory()[0] == 0 :
+                        if plus_rect.collidepoint(event.pos):
+                            if nb_balle < 6:
+                                nb_balle += 1
+                                barillet = pygame.transform.scale(pygame.image.load(f"images/barillet/barillet{nb_balle}.png"), (110, 110))
+                        elif moins_rect.collidepoint(event.pos):
+                            if nb_balle > 0:
+                                nb_balle -= 1
+                                barillet = pygame.transform.scale(pygame.image.load(f"images/barillet/barillet{nb_balle}.png"), (110, 110))
+                        else:
+                            self.roulette(nb_balle, t_barillet)
+                    else :
+                        if plus_rect.collidepoint(event.pos):
+                            if nb_balle < 9:
+                                nb_balle += 1
+                                barillet = pygame.transform.scale(pygame.image.load(f"images/barillet/big_barillet{nb_balle}.png"), (110, 110))
+                        elif moins_rect.collidepoint(event.pos):
+                            if nb_balle > 0:
+                                nb_balle -= 1
+                                barillet = pygame.transform.scale(pygame.image.load(f"images/barillet/big_barillet{nb_balle}.png"), (110, 110))
+                        else:
+                            self.roulette(nb_balle, t_barillet)
 
 
     def roulette(self, nb_balle,chance):
-         if nb_balle - self.player.get_chance() > 0:
-             if random.randint(1,chance)> nb_balle - self.player.get_chance() :
-                self.mouvement += nb_balle
-         else:
-            if random.randint(1,chance)> nb_balle:
-                self.mouvement += nb_balle
+        if nb_balle!=0:
+            if nb_balle - self.player.get_chance() > 0:
+                if random.randint(1,chance) > nb_balle - self.player.get_chance():
+                    self.mouvement += nb_balle
+                    self.player.add_life(int((random.randint(1,nb_balle)*self.player.get_chance())/2))
+                else:
+                    self.player.set_damaged(random.randint(5,11-self.player.get_chance()))
+                    RED_TRANSPARENT = (255, 0, 0, 150)
+                    pause_surface = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+                    pause_surface.fill(RED_TRANSPARENT)
+                    self.screen.blit(pause_surface, (0, 0))
+                    pygame.display.flip()
+                    time.sleep(0.2)
+
             else:
-                self.player.set_damaged(random.randint(5,11-self.player.get_chance()))
+                if random.randint(1,chance) > 1:
+                    self.mouvement += nb_balle
+                    self.player.add_life(int((random.randint(1,nb_balle)*self.player.get_chance())/2))
+                else: 
+                    self.player.set_damaged(random.randint(5,11-self.player.get_chance()))
+                    RED_TRANSPARENT = (255, 0, 0, 150)
+                    pause_surface = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+                    pause_surface.fill(RED_TRANSPARENT)
+                    self.screen.blit(pause_surface, (0, 0))
+                    pygame.display.flip()
+                    time.sleep(0.2)
+
 
 class Timer:
     def __init__(self):

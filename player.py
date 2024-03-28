@@ -65,15 +65,18 @@ class Player(pygame.sprite.Sprite):
     
     def set_life(self,life):
         self.life=life
+
+    def add_life(self,life):
+        self.life+=life/2
     
     def set_damaged(self,life):
         if self.inventory[2]==1:
-            self.inventory[2]==0
+            self.inventory[2]=0
+            print('value update')
         elif self.inventory[1]==1:
             self.life=self.life-int(life/2)
         else:
             self.life=self.life-life
-
     def get_money(self):
         return self.money
     
