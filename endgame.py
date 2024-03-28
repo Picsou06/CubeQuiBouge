@@ -1,30 +1,53 @@
 import pygame
 
-def win(screen):
+def win(screen,time):
     screen_width, screen_height = screen.get_size()
-    leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
-    background = pygame.transform.scale(pygame.image.load("images/lobby (Dall-E).png"), screen.get_size())
     font = pygame.font.SysFont('bold', 60)
-    fin = font.render('fin', True, (255, 255, 255))
-    #Créations de zones cliquables sous forme de Rect pour simplifier la gestion des collisions avec les images des boutons et régler leur position (en prenant le centre du rectangle)
-    leave_rect = leave.get_rect()
-    leave_rect.topleft = (screen_width-75, 25)
-
+    fin = font.render('WIN', True, (255, 255, 255))
+    fin_rect = fin.get_rect()
+    fin_rect.center = ((screen_width/2) -10,screen_width/4)
+    font = pygame.font.SysFont('bold', 40)
+    time_txt = font.render("Tu as fini en : "+str(time), True, (255,255,255))
+    time_rect = time_txt.get_rect()
+    time_rect.center = (screen_width/2,screen_height/2)
     ###Boucle principale
     running = True
     while running:
         #Récupération des évènements
         for event in pygame.event.get():
-            #on récupère les clics de la souris
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                #collisions avec les rectangles
-                if leave_rect.collidepoint(event.pos):
-                    leave = pygame.transform.scale(pygame.image.load("images/quitter.png"), (45,45))
-                    #sortie de la boucle
-                    exit()
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                exit()
         #Affichages
-        screen.blit(background, (0, 0))
-        pygame.draw.rect(screen,(0,0,0),pygame.Rect(screen_width/2-100,screen_height/3-50,250,150))
-        screen.blit(leave, leave_rect)
-        screen.blit(fin, (screen_width/2, screen_height/3))
+    
+
+        screen.blit(fin, fin_rect)
+        screen.blit(time_txt, time_rect)
+        pygame.display.flip()
+
+def lose(screen,time):
+    screen_width, screen_height = screen.get_size()
+    font = pygame.font.SysFont('bold', 60)
+    perdu = font.render('PERDU', True, (255, 255, 255))
+    perdu_rect = perdu.get_rect()
+    perdu_rect.center = ((screen_width/2)-10,screen_width/4)
+    font = pygame.font.SysFont('bold', 40)
+    time_txt = font.render("Tu as perdu en : "+str(time), True, (255,255,255))
+    time_rect = time_txt.get_rect()
+    time_rect.center = (screen_width/2,screen_height/2)
+    ###Boucle principale
+    running = True
+    while running:
+        #Récupération des évènements
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                exit()
+        #Affichages
+        
+        
+        screen.blit(perdu, perdu_rect)
+        screen.blit(time_txt, time_rect)
         pygame.display.flip()

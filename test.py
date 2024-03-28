@@ -1,57 +1,44 @@
-import pytmx
-from pytmx.util_pygame import load_pygame
-import pyscroll
 import pygame
+from math import *
 
-# Taille d'une tuile en pixels
-TILE_SIZE = 32
 
-def generate_tmx_map(data):
-    # Créer un fichier TMX vide
-    tmx_map = pytmx.TiledMap()
 
-    # Définir les propriétés de la carte
-    tmx_map.width = len(data[0])
-    tmx_map.height = len(data)
-    tmx_map.tilewidth = TILE_SIZE
-    tmx_map.tileheight = TILE_SIZE
-    
-    # Créer un nouveau calque de tuiles
-    tile_layer = pytmx.TiledTileLayer(tmx_map.width, tmx_map.height)
-    tile_layer.name = "Ground"
-    
-    # Parcourir la liste et remplir le calque de tuiles
-    for y, row in enumerate(data):
-        for x, tile in enumerate(row):
-            # Ajouter la tuile en fonction de sa valeur dans la liste
-            if tile == 0:  # Sol
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None)
-            elif tile == 1:  # Mur
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None, True)
-            elif tile == 2:  # Coffre
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None)
-            elif tile == 3:  # Boutique
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None, True)
-            elif tile == 4:  # Départ
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None)
-            elif tile == 5:  # Coffre clé
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None)
-            elif tile == 6:  # Arrivée
-                tile_layer.data[y][x] = pytmx.Tile(None, None, None, None)
+def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, champi_v, Fer a cheval, Trèfle]
+  inv = player.get_inventory()
+  running = True
+
+  screen_width, screen_height = screen.get_size()
+  base = pygame.transform.scale(pygame.image.load("images/Shop/sprite_01.png"), (550, 500))
+  rect_base = base.get_rect()
+  rect_base.center = (screen_width/2,screen_height/2)
+  champi_r = pygame.transform.scale(pygame.image.load("images/Shop/sprite_02.png"), (550, 500))
+  rect_champ_r = pygame.Rect(rect_base.left+324,rect_base.top+98,24,20)
+  money_img = pygame.transform.scale(pygame.image.load("images/money.png"), (45, 45))
+  lst_prix = [40,60,20,15,130,60,40,30]
+  font = pygame.font.SysFont('bold', 30)
+
+  while running:
+        if inv[3] == 0:
+            #Champi_r
+            statut_champi_r = "dispo"
+            screen.blit(base, rect_base)
+            screen.blit(champi_r, rect_base)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rect_champ_r.collidepoint(event.pos):
+                    if statut_champi_r == "dispo":
+                        if player.get_money() >= 5:
+                            inv[3] = 1
+                            player.set_money(player.get_money() - 5)
+                            statut_champi_r = "sold"
+                            print("champi rouge vendu")
+        if rect_champ_r.collidepoint(pygame.mouse.get_pos()):
+            if statut_champi_r == "dispo":
+                screen.blit(money_img, pygame.mouse.get_pos())
+                screen.blit(font.render(str(lst_prix[3]), True, (255, 255, 255)), (pygame.mouse.get_pos()[0] + 10, pygame.mouse.get_pos()[1] + 10))
+
+        pygame.draw.rect(screen, (100,100,100), rect_champ_r)
+        pygame.display.flip()
                 
-    # Ajouter le calque de tuiles à la carte
-    tmx_map.layers.append(tile_layer)
-    
-    return tmx_map
 
-# Exemple d'utilisation
-data = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 1], [1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 2, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1], [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
-
-# Générer la carte TMX
-tmx_map = generate_tmx_map(data)
-
-# Enregistrer la carte TMX dans un fichier
-with open("generated_map.tmx", "w") as f:
-    tmx_map.save(f)
-
-print("Fichier TMX généré avec succès !")

@@ -1,11 +1,10 @@
 from typing import Any
 import pygame
 
+ #inv = [phase_barillet, armure, shield, champi_r, champi_v, Fer a cheval, Trèfle, Popo de Vie]
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        self.life=40
-        self.money=10
-        self.chance=1
         super().__init__()
         self.sprite_sheet = pygame.image.load("images/player.png")
         self.image=self.get_image(0,0)
@@ -67,6 +66,14 @@ class Player(pygame.sprite.Sprite):
     def set_life(self,life):
         self.life=life
     
+    def set_damaged(self,life):
+        if self.inventory[2]==1:
+            self.inventory[2]==0
+        elif self.inventory[1]==1:
+            self.life=self.life-int(life/2)
+        else:
+            self.life=self.life-life
+
     def get_money(self):
         return self.money
     
@@ -87,3 +94,9 @@ class Player(pygame.sprite.Sprite):
     
     def add_chance(self,chance):
         self.chance+=chance
+
+    def set_inventory(self,inventory):
+        self.inventory=inventory
+    
+    def get_inventory(self):
+        return self.inventory
