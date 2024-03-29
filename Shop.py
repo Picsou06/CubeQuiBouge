@@ -51,7 +51,7 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
   
   while running:
       money = font.render(str(player.get_money()), True, (255, 255, 255))
-      vie = font.render(str(player.get_life()), True, (255,255,255))
+      vie = font.render(str(int(player.get_life())), True, (255,255,255))
       screen.fill((48,46,55))
       screen.blit(base, rect_base)
       screen.blit(portal_gun, rect_base)
