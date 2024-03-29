@@ -81,7 +81,7 @@ class Game:
                                         running = False
                                         pygame.quit()
                                         exit()
-                            timer.start()
+                        timer.resume()
                 if key == pygame.K_a:
                     timer.pause()
                     Shop.s_inv(self.screen, self.player)
