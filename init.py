@@ -31,6 +31,7 @@ mazescan.create_xml_file(mazemap)
 background = pygame.transform.scale(pygame.image.load("images/lobby (Dall-E).png"), screen.get_size())
 play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))
 tuto_img = pygame.transform.scale(pygame.image.load("images/Tuto.png"), (150,100))
+font = pygame.font.SysFont('bold', 80)
 
 #Créations de zones cliquables sous forme de Rect pour simplifier la gestion des collisions avec les images des boutons et régler leur position (en prenant le centre du rectangle)
 play_rect = play.get_rect()
@@ -62,6 +63,7 @@ while running:
     screen.blit(background, (0, 0))
     screen.blit(play, play_rect)
     screen.blit(tuto_img, tuto_rect)
+    screen.blit(font.render(str("CubeQuiBouge"), True, (0, 0, 0)), (200,70))
     pygame.display.flip()
 
 #fermeture de pygame

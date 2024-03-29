@@ -11,11 +11,14 @@ def tuto(screen):
         play_rect.height=play_rect.height-50
         shop_rect = shop.get_rect()
         shop_rect.height=shop_rect.height
-        shop_rect.center=(SCREEN_HEIGHT/2, (SCREEN_WIDTH/3)*2+80)
+        shop_rect.center=(SCREEN_HEIGHT-100, (SCREEN_WIDTH/3)*2+80)
         font = pygame.font.SysFont('bold', 30)
         ZQSD=pygame.transform.scale(pygame.image.load("images/ZQSD.png"), (150,100))
         fleche=pygame.transform.scale(pygame.image.load("images/fleche.png"), (150,100))
         A=pygame.transform.scale(pygame.image.load("images/A.png"), (50,50))
+        click=pygame.transform.scale(pygame.image.load("images/click_souris.png"), (50,50))
+        ajouter=pygame.transform.scale(pygame.image.load("images/boutton_plus.png"), (40,26))
+        enlever=pygame.transform.scale(pygame.image.load("images/boutton_moins.png"), (40,26))
 
         ###Boucle principale
         running = True
@@ -44,10 +47,16 @@ def tuto(screen):
                 screen.blit(fleche, (250,100))
                 screen.blit(font.render(str("Ouvrir le shop:"), True, (255, 255, 255)), (50,210))
                 screen.blit(A, (50,250))
+                screen.blit(font.render(str("Fusil:"), True, (255, 255, 255)), (50,310))
+                screen.blit(click, (50,340))
+                screen.blit(font.render(str("Tirer"), True, (255, 255, 255)), (150,355))
+                screen.blit(ajouter, (50,440))
+                screen.blit(font.render(str("Ajouter une balle au barillet"), True, (255, 255, 255)), (150,440))
+                screen.blit(enlever, (50,490))
+                screen.blit(font.render(str("Enlever une balle du barillet"), True, (255, 255, 255)), (150,490))
                 pygame.display.flip()
 
 def shop_tuto(screen):
-    import pygame
     running = True
     
     font = pygame.font.SysFont('bold', 30)
