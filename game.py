@@ -8,7 +8,6 @@ import mazescan
 import time
 import endgame
 import threading
-import time
 import Shop
 
 start=0
