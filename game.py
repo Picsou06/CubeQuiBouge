@@ -59,7 +59,7 @@ class Game:
     def input_pressed(self):
         pressed = pygame.key.get_pressed()
         # Boucle sur toutes les touches surveillées
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_ESCAPE, pygame.K_s]:
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_ESCAPE, pygame.K_s, pygame.K_z, pygame.K_q, pygame.K_s, pygame.K_d, pygame.K_a]:
             # Vérifie si la touche est enfoncée et si elle était relâchée précédemment
             if pressed[key] and not self.previous_key_state.get(key, False):
                 if key == pygame.K_ESCAPE:
@@ -83,7 +83,7 @@ class Game:
                                         pygame.quit()
                                         exit()
                             timer.start()
-                if key == pygame.K_s:
+                if key == pygame.K_a:
                     timer.pause()
                     Shop.s_inv(self.screen, self.player)
                     timer.resume()
@@ -93,16 +93,16 @@ class Game:
                         barillet = pygame.transform.scale(pygame.image.load("images/barillet/big_barillet0.png"), (110, 110))
                 if self.mouvement > 0:
                     # Effectue le mouvement correspondant à la touche pressée
-                    if key == pygame.K_UP:
+                    if key == pygame.K_UP or key == pygame.K_z:
                         self.player.move_up()
                         self.mouvement -= 1
-                    elif key == pygame.K_DOWN:
+                    elif key == pygame.K_DOWN or key == pygame.K_s:
                         self.player.move_down()
                         self.mouvement -= 1
-                    elif key == pygame.K_RIGHT:
+                    elif key == pygame.K_RIGHT or key == pygame.K_d:
                         self.player.move_right()
                         self.mouvement -= 1
-                    elif key == pygame.K_LEFT:
+                    elif key == pygame.K_LEFT or key == pygame.K_q:
                         self.player.move_left()
                         self.mouvement -= 1
 
@@ -156,9 +156,9 @@ class Game:
         pygame.display.flip()
         while running:
             money = font.render(str(self.player.get_money()), True, (255, 255, 255))
-            vie = font.render(str(self.player.get_life()), True, (255,255,255))
+            vie = font.render(str(int(self.player.get_life())), True, (255,255,255))
             elapsed_time = format_time(timer.get_elapsed_time())  # Obtenez le temps écoulé
-            if self.player.get_life() <= 0:
+            if int(self.player.get_life()) <= 0:
                 if self.player.get_inventory()[3]==1:
                     self.player.set_life(40)
                     temp=self.player.get_inventory()
@@ -228,7 +228,6 @@ class Game:
                     self.screen.blit(pause_surface, (0, 0))
                     pygame.display.flip()
                     time.sleep(0.2)
-
             else:
                 if random.randint(1,chance) > 1:
                     self.mouvement += nb_balle

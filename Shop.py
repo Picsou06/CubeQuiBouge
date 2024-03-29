@@ -8,8 +8,6 @@ def s_inv(screen, player): #inv = [phase_barillet, armure, shield, champi_r, cha
   running = True
   
   font = pygame.font.SysFont('bold', 30)
-
-  lst_prix = [40,60,20,15,130,60,40,30]
   vie_img = pygame.transform.scale(pygame.image.load("images/vie.png"), (45, 45))
   screen_width, screen_height = screen.get_size()
   base = pygame.transform.scale(pygame.image.load("images/Shop/sprite_01.png"), (550, 500))

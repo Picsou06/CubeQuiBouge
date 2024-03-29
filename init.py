@@ -4,8 +4,9 @@ import os
 import mazescan
 import game
 import random
+import tuto
 
-### Initialisation de la fenêtre pygame
+### Initialisation de la fenêtre pygame()
 pygame.init()
 SCREEN_HEIGHT = 800
 SCREEN_WIDTH = 600
@@ -29,10 +30,14 @@ mazescan.create_xml_file(mazemap)
 #Chargement des images de boutons & fond de la page d'accueil
 background = pygame.transform.scale(pygame.image.load("images/lobby (Dall-E).png"), screen.get_size())
 play = pygame.transform.scale(pygame.image.load("images/play.png"), (200,150))
+tuto_img = pygame.transform.scale(pygame.image.load("images/Tuto.png"), (150,100))
 
 #Créations de zones cliquables sous forme de Rect pour simplifier la gestion des collisions avec les images des boutons et régler leur position (en prenant le centre du rectangle)
 play_rect = play.get_rect()
-play_rect.topleft =(SCREEN_HEIGHT/2-100, (SCREEN_WIDTH/3)*2)
+play_rect.topleft =(SCREEN_HEIGHT/2-100, (SCREEN_WIDTH/3)*2-70)
+play_rect.height=play_rect.height-50
+tuto_rect = tuto_img.get_rect()
+tuto_rect.topleft =((SCREEN_HEIGHT/2-70), (SCREEN_WIDTH/3)*2+60)
 
 ###Boucle principale
 running = True
@@ -50,10 +55,13 @@ while running:
                 running = False
                 #lancement du jeu
                 game.start(screen, mazemap)
+            if tuto_rect.collidepoint(event.pos):
+                tuto.tuto(screen)
 
     #Affichages
     screen.blit(background, (0, 0))
     screen.blit(play, play_rect)
+    screen.blit(tuto_img, tuto_rect)
     pygame.display.flip()
 
 #fermeture de pygame
