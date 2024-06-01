@@ -81,11 +81,11 @@ class Game:
                                         running = False
                                         pygame.quit()
                                         exit()
-                        timer.resume()
+                        timer.play()
                 if key == pygame.K_a:
                     timer.pause()
                     Shop.s_inv(self.screen, self.player)
-                    timer.resume()
+                    timer.play()
                     if self.player.get_inventory()[0]==1:
                         global t_barillet, barillet, nb_balle
                         t_barillet=9
